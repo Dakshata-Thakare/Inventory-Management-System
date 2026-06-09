@@ -5,16 +5,18 @@ from fastapi.security import OAuth2PasswordRequestForm
 from schemas import Token,User,UserInDB,UserResponse
 from auth import authenticate_user,create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES
 from dependencies import fake_users_db,get_current_active_user
+from database import get_db
 
 router = APIRouter()
 
 
 @router.post("/token")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm,Depends()]) -> Token:
+    # form_data: Annotated[OAuth2PasswordRequestForm,Depends()]) -> Token:
+    form_data:Annotated[OAuth2PasswordRequestForm,Depends()],db: Session = Depends(get_db)):
     # print("username: ",form_data.username)
     # print("password: ",form_data.password)
-    user = authenticate_user(fake_users_db,form_data.username,form_data.password)
+    user = authenticate_user(db,form_data.username,form_data.password)
 
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)

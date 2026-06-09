@@ -22,6 +22,11 @@ class User(BaseModel):
     full_name: str | None = None
     disabled: bool | None = None
 
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+
 class UserResponse(BaseModel):
     username: str
     email: str

@@ -1,5 +1,5 @@
 from typing import Annotated
-
+from database import get_db
 import jwt
 from fastapi import Depends, HTTPException, status
 from jwt.exceptions import InvalidTokenError
@@ -24,9 +24,8 @@ fake_users_db = {
     }
 }
 
-
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)]):
+    token: Annotated[str, Depends(oauth2_scheme)],db: Session=Depends(get_db)):
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Could not validate credentials",)
     try:
         payload = jwt.decode(
@@ -45,7 +44,7 @@ async def get_current_user(
         raise credentials_exception
 
     user = get_user(
-        fake_users_db,
+        db,
         token_data.username
     )
 

@@ -3,21 +3,10 @@ from sqlalchemy.orm import Session
 
 import database_models
 
-from database import session
+from database import get_db
 from schemas import Product
 
 router = APIRouter()
-
-
-def get_db():
-    db = session()
-
-    try:
-        yield db
-
-    finally:
-        db.close()
-
 
 @router.get("/products")
 def get_all_products(db: Session = Depends(get_db)):
