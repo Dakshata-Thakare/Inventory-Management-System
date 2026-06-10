@@ -1,5 +1,6 @@
 #this model for pydantic
 from pydantic import BaseModel
+from datetime import datetime
 
 class Product(BaseModel):
     id:int
@@ -19,8 +20,9 @@ class Product(BaseModel):
 class User(BaseModel):
     username: str
     email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
+    role:str
+    is_active:bool
+    created_at:datetime | None = None
 
 class UserCreate(BaseModel):
     username: str
@@ -38,10 +40,17 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    refresh_token: str
 
 
 class TokenData(BaseModel):
     username: str | None = None
+    role: str | None = None
 
 class UserInDB(User):
     hashed_password: str
+
+class AdminCreate(BaseModel):
+    username:str
+    email:str
+    password:str

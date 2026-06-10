@@ -5,6 +5,7 @@ import database_models
 
 from database import get_db
 from schemas import Product
+from permissions import require_role
 
 router = APIRouter()
 
@@ -17,15 +18,23 @@ def get_all_products(db: Session = Depends(get_db)):
 def get_product_by_id(id: int,db: Session = Depends(get_db)):
     return db.query(database_models.Product).filter(database_models.Product.id == id).first()
 
-
 @router.post("/product")
-def add_product(product: Product,db: Session = Depends(get_db)):
+def add_product(product: Product,db: Session = Depends(get_db),current_user = Depends(require_role("admin","superadmin"))):
     db.add(
         database_models.Product(
             **product.model_dump()
         )
     )
-
     db.commit()
-
     return {"message": "Added"}
+
+@router.delete("/products/{id}")
+def delete_product(
+    current_user=Depends(
+        require_role(
+            "admin",
+            "superadmin"
+        )
+    )
+):
+    pass

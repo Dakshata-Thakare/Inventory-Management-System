@@ -8,6 +8,7 @@ from database_models import User
 SECRET_KEY = "10738ae3595dd041555af21258a083c0aba787db68feab423d38194b91817331" #need to hide this
 ALGORITHM = "HS256" #need to hide this
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 #need to hide this
+REFRESH_TOKEN_EXPIRE_DAYS = 7 #need to hidh this
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 password_hash = PasswordHash.recommended()
@@ -49,3 +50,9 @@ def create_access_token(data: dict, expires_delta=None):
         SECRET_KEY,
         algorithm=ALGORITHM
     )
+
+def create_refresh_token(data: dict):
+    expire = (datetime.now(timezone.utc)+ timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS))
+    to_encode = data.copy()
+    to_encode.update({"exp": expire,"type": "refresh"})
+    return jwt.encode(to_encode,SECRET_KEY,algorithm=ALGORITHM)
